@@ -1,0 +1,87 @@
+Pripojeni radia:
+  AVR          RFM12
+             - VDI/nINT
+             - VDD
+  PB4/MISO   - SDI 
+  PB5/SCK    - SCK
+  PB2        - nSEL 
+  PB3/MOSI   - SDO
+  PD2/INT0   - nIRQ
+  PB1        - DATA
+             - DCLK
+             - CLK
+             - nRES
+             - GND 
+
+
+PB4 a PB3 se maji prohodit, protoze MISO = Master INPUT (a je to pripojene ted na SD Input na RFM12)
+az pak pujde pouzit SPI v AVR (ted se to taha rucne ~ rucni spi komunikace je pomala)
+
+ nastaveni IO pro radio:
+  PB4 - OUT/LOW
+  PB5 - OUT/LOW   (== take zelena ledka na AVR!)
+  PB2 - OUT/HIGH
+
+  PB1 - IN
+  PB3 - IN
+  PD2 - IN
+
+/////
+01:cfg=0xE7[EL=1, EF=1, B=10:0x02, X=0111:0x07]
+02:power=0x39[ER=0, EBB=0, ET=1, ES=1, EX=1, EB=0, EW=0, DC=1]
+03:freq=0x0640[F=011001000000]
+04:rate=0x47[CS=0, R=1000111:0x47]
+05:rcontrol=0x04A0[P16=1, D=00:0x00, I=101:0x05, G=00:0x00, R=000:0x00]
+06:dfilter=0xAC[AL=1, ML=0, S=0, F=100:0x04]
+07:fifoc=0x81[F=1000:0x08, SP=0, AL=0, FF=0, DR=1]
+08:syncp=0xD4[B=11010100]
+09:FIFO
+10:afc=0x83[A=10:0x02, RL=00:0x00, ST=0, FI=0, OE=1, EN=1]
+11:txcfg=0x0050[MP=0, M=0101:0x05, P=000:0x00]
+12:pll=0x17[OB=00, DDY=0, DDIT=1, BW0=1]
+13:tx=0xAA[T=10101010]
+14:wtimer=0x0000[R=00000:0x00, M=00000000:0x00]
+15:lduty=0x0000[R0=0, D=0000000:0x00, EN=0]
+16:lbatt=0x40[D=010:0x02, V=0000:0x00]
+
+
+
+
+///// Delka anteny 
+
+L = 7500/MHz
+
+7500/868 = 8.640cm
+
+dle http://jeelabs.net/projects/hardware/wiki/JeeNode
+je:
+Connect a 1/4-wavelength wire antenna to pin 1 of the radio module:
+    * for 433 MHz, use a 165 mm wire
+    * for 868 MHz, use a 82 mm wire
+    * for 915 MHz, use a 78 mm wire
+
+
+///  vypocet frekvence f0 (pro 868Mhz modul)
+ f0 =  10 * 2 * (43 + F/4000)[MHz]
+ F z [96 - 3903], tj:
+ f0_min = 860.48
+ f0_max = 879.515
+ f0_step = 0.005   (5KHz) (celkem 3807 freq v rozsahu 19.035MHz)
+
+
+ BW sirka pasma (I=101) 135KHz (=141 kanalu) (pro I=110, 200KHz = 95 kanalu) (pro I=001, 400KHz = 47 kanalu) 
+
+ FSK modulace f0 +- 15KHz*6  (M=5) tj. (-90KHz .. +90KHz )
+
+
+///  
+pripojeni test tlacitek/ledek
+PC0 az PC5 - prvnich 6
+mozno pripojit dalsi 2 na PB0 a PB1 (az ale bude PB1 volna, ted dela travalou "1" pro "DATA" na RF12)
+
+################ final jeenode #################
+1) je tam RFM12B (misto RFM12, + registry na sync pattern a dalsi zmeny)
+2) RFM12B je pripojen pres SPI, (tj. korektni piny, ne soucasny hack s prohozenym SCK/DATA!)
+3) RMF12B jede jen na 3.3V, vyzkouset sirsi pasmo (~ vyssi bitrate)
+3) cteni padu pres I2C - idealne 16bit - MCP23016
+4) treba dodelat sw I2C vrstvu - k pripojeni expanderu

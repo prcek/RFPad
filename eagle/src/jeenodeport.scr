@@ -1,0 +1,90 @@
+#jeepin
+Set Wire_Bend 2;
+Grid mm;
+
+
+Remove 'JeeNodePort.dev'
+Remove 'JeeNodePort.sym'
+Remove 'JeeNodePort.pac'
+
+
+Edit 'JeeNodePort.sym';
+Pin '1P' Pas Dot Short R0 Pad 0 (-2.54 7.62);
+Pin '2D' Pas Dot Short R0 Pad 0 (-2.54 5.08);
+Pin '3G' Pas Dot Short R0 Pad 0 (-2.54 2.54);
+Pin '4+' Pas Dot Short R0 Pad 0 (-2.54 0);
+Pin '5A' Pas Dot Short R0 Pad 0 (-2.54 -2.54);
+Pin '6I' Pas Dot Short R0 Pad 0 (-2.54 -5.08);
+Layer 94;
+Wire  0.4064 (-6.35 -7.62) (1.27 -7.62) (1.27 10.16) (-6.35 10.16) \
+      (-6.35 -7.62);
+Layer 95;
+Change Size 1.778;
+Change Ratio 8; 
+Text '>NAME' R0 (-6.35 10.795);
+Layer 96;
+Change Size 1.778;
+Change Ratio 8;
+Text '>VALUE' R0 (-6.35 -10.16);
+
+
+Edit 'JeeNodePort.pac';
+Description '<b>JeeNode Port</b>';
+Change Drill 1.016;Pad '1P' Long 0 R90 (-6.35 0);
+Change Drill 1.016;Pad '2D' Long 0 R90 (-3.81 0);
+Change Drill 1.016;Pad '3G' Long 0 R90 (-1.27 0);
+Change Drill 1.016;Pad '4+' Long 0 R90 (1.27 0);
+Change Drill 1.016;Pad '5A' Long 0 R90 (3.81 0);
+Change Drill 1.016;Pad '6I' Long 0 R90 (6.35 0);
+
+Layer 25;
+Change Size 1.27;
+Change Ratio 10;
+Text '>NAME' R0 (-7.6962 1.8288);
+Layer 27;
+Change Size 1.27;
+Change Ratio 8;
+Text '>VALUE' R0 (-7.62 -3.175);
+
+
+Layer 21;
+Wire  0.1524 (0.635 1.27) (1.905 1.27) (2.54 0.635) (2.54 -0.635) \
+      (1.905 -1.27);
+Wire  0.1524 (2.54 0.635) (3.175 1.27) (4.445 1.27) (5.08 0.635) \
+      (5.08 -0.635) (4.445 -1.27) (3.175 -1.27) (2.54 -0.635);
+Wire  0.1524 (-2.54 0.635) (-1.905 1.27) (-0.635 1.27) (0 0.635) \
+      (0 -0.635) (-0.635 -1.27) (-1.905 -1.27) (-2.54 -0.635);
+Wire  0.1524 (0.635 1.27) (0 0.635);
+Wire  0.1524 (0 -0.635) (0.635 -1.27);
+Wire  0.1524 (1.905 -1.27) (0.635 -1.27);
+Wire  0.1524 (-6.985 1.27) (-5.715 1.27) (-5.08 0.635) (-5.08 -0.635) \
+      (-5.715 -1.27);
+Wire  0.1524 (-5.08 0.635) (-4.445 1.27) (-3.175 1.27) (-2.54 0.635) \
+      (-2.54 -0.635) (-3.175 -1.27) (-4.445 -1.27) (-5.08 -0.635);
+Wire  0.1524 (-7.62 0.635) (-7.62 -0.635);
+Wire  0.1524 (-6.985 1.27) (-7.62 0.635);
+Wire  0.1524 (-7.62 -0.635) (-6.985 -1.27);
+Wire  0.1524 (-5.715 -1.27) (-6.985 -1.27);
+Wire  0.1524 (5.715 1.27) (6.985 1.27) (7.62 0.635) (7.62 -0.635) \
+      (6.985 -1.27);
+Wire  0.1524 (5.715 1.27) (5.08 0.635);
+Wire  0.1524 (5.08 -0.635) (5.715 -1.27);
+Wire  0.1524 (6.985 -1.27) (5.715 -1.27);
+
+Layer 51;
+Rect R0 (3.556 -0.254) (4.064 0.254);
+Rect R0 (1.016 -0.254) (1.524 0.254);
+Rect R0 (-1.524 -0.254) (-1.016 0.254);
+Rect R0 (-4.064 -0.254) (-3.556 0.254);
+Rect R0 (-6.604 -0.254) (-6.096 0.254);
+Rect R0 (6.096 -0.254) (6.604 0.254);
+
+Edit 'JeeNodePort.dev'; 
+Prefix 'JP';
+Description '<b>JeeNode Port</b>';
+Value On;
+Add JeeNodePort 'A' Next 0 (0 -2.54);
+Package 'JeeNodePort' '''''';
+Technology '';
+Connect  'A.1P' '1P'  'A.2D' '2D'  'A.3G' '3G'  'A.4+' '4+'  'A.5A' '5A'  'A.6I' '6I';
+
