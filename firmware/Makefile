@@ -3,9 +3,9 @@
 TARGET=main
 SRC=main.c prompt.c uart.c rf.c print.c scan.c ee.c utils.c io.c timer.c server.c client.c
 
-MCU=atmega168
-AVRDUDE_PROGRAMMER = stk500v1
-AVRDUDE_BAUD = 19200
+MCU=atmega328p
+AVRDUDE_PROGRAMMER = arduino
+AVRDUDE_BAUD = 57600
 AVR_BAUD = 115200
 
 
