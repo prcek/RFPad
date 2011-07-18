@@ -72,8 +72,8 @@ static prog_uint8_t rf_channel_count_consts[8] = { RF_FREQ_COUNT/RF_BW_0, RF_FRE
 
 //#define DELAY _delay_us(1)  //ms
 #define SCK 5
-#define SDI 4
-#define SDO 3 
+#define SDI 3//jeenode (old protoboard 4)
+#define SDO 4//jeenode (old protoboard 3)
 #define CS 2
 
 #define HI(x) PORTB |= (1<<(x))
