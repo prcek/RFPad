@@ -115,7 +115,7 @@ uint8_t i2c_read(uint8_t last) {
 }
 
 
-#define I2C_ADDR 0
+#define I2C_ADDR 0x40
 
 void pad_init() {
     i2c_init();
