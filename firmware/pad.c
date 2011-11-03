@@ -132,6 +132,12 @@ void pad_test() {
     }
 }
 
+uint8_t pad_write(uint8_t data) {
+    uint8_t ok = i2c_start(I2C_ADDR ); 
+    uint8_t ok2 = i2c_write(data);
+    i2c_stop();
+}
+
 uint8_t pad_read() {
     uint8_t ok = i2c_start(I2C_ADDR | 1); 
     uint8_t data = i2c_read(1);  
@@ -141,6 +147,7 @@ uint8_t pad_read() {
 void pad_autoread() {
 	print(PSTR("pad autoread\n\r"));
 	pad_init();
+    pad_write(0xff); //all pins HIGH = INPUT
 	while(!uart_read_ready()) {
         pad_read();
     }
