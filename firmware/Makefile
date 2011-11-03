@@ -1,7 +1,7 @@
 
 
 TARGET=main
-SRC=main.c prompt.c uart.c rf.c print.c scan.c ee.c utils.c io.c timer.c server.c client.c
+SRC=main.c prompt.c uart.c rf.c print.c scan.c ee.c utils.c io.c timer.c server.c client.c pad.c
 
 MCU=atmega328p
 AVRDUDE_PROGRAMMER = arduino

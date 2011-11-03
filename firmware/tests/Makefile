@@ -10,8 +10,8 @@
 
 all: test run
 
-test: 	test.o fake_avr.o rf.o print.o scan.o ee.o prompt.o io.o timer.o server.o client.o
-	gcc test.o fake_avr.o rf.o print.o scan.o ee.o prompt.o io.o timer.o server.o client.o -o test 
+test: 	test.o fake_avr.o rf.o print.o scan.o ee.o prompt.o io.o timer.o server.o client.o pad.o
+	gcc test.o fake_avr.o rf.o print.o scan.o ee.o prompt.o io.o timer.o server.o client.o pad.o -o test 
 
 test.o: test.c
 	gcc -Wall -c test.c  -o test.o
@@ -43,6 +43,9 @@ server.o: ../server.c
 client.o: ../client.c
 	gcc -Ifake_avr -Wall -c ../client.c -o client.o
 
+pad.o: ../pad.c
+	gcc -Ifake_avr -Wall -c ../pad.c -o pad.o
+
 prompt.o: ../prompt.c
 	gcc -Ifake_avr -Wall -c ../prompt.c -o prompt.o
 
@@ -50,4 +53,4 @@ run: test
 	./test
 
 clean:
-	rm -rf rf.o print.o scan.o test.o ee.o fake_avr.o prompt.o io.o timer.o server.o client.o test 
+	rm -rf rf.o print.o scan.o test.o ee.o fake_avr.o prompt.o io.o timer.o server.o client.o pad.o test 

@@ -11,6 +11,7 @@
 #include"timer.h"
 #include"server.h"
 #include"client.h"
+#include"pad.h"
 
 void set_print_info() {
 	uint8_t mode = eerd_b(EE_AUTO_MODE);
@@ -129,6 +130,8 @@ uint8_t do_prompt() {
 		return client_do_prompt();
 	} else if (strcmp(group,"set")==0) {
 		return set_do_prompt();
+    } else if (strcmp(group,"pad")==0) {
+        return pad_do_prompt();
 	} else if (strcmp(group,".")==0) {
 		return 0;
 	} 
