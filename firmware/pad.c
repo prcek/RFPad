@@ -115,16 +115,27 @@ uint8_t i2c_read(uint8_t last) {
 }
 
 
+#define I2C_ADDR 0
+
 void pad_init() {
+    i2c_init();
 }
 
 
 void pad_test() {
-
+    uint8_t ok = i2c_start(I2C_ADDR);
+    i2c_stop();
+    if (ok) {
+	    print(PSTR("pad test ok\n\r"));
+    } else {
+	    print(PSTR("pad test error\n\r"));
+    }
 }
 
 uint8_t pad_read() {
-    return 0;
+    uint8_t ok = i2c_start(I2C_ADDR | 1); 
+    uint8_t data = i2c_read(1);  
+    return data;
 }
 
 void pad_autoread() {
