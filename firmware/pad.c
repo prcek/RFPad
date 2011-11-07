@@ -13,7 +13,13 @@
 #include"scan.h"
 
 
-//TODO: check jeenode for correct value
+//JeeNode port pins
+// jeenode PORT1 = IRQ:PD3, SDA:AIO:PC0, SCL:DIO:PD4
+// jeenode PORT2 = IRQ:PD3, SDA:AIO:PC1, SCL:DIO:PD5
+// jeenode PORT3 = IRQ:PD3, SDA:AIO:PC2, SCL:DIO:PD6
+// jeenode PORT4 = IRQ:PD3, SDA:AIO:PC3, SCL:DIO:PD7
+
+
 #define SCL 0
 #define SDA 0
 
