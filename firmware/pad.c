@@ -60,7 +60,7 @@ void led_y_off() { LO(LEDY_PORT,LEDY); }
 void led_g_off() { LO(LEDG_PORT,LEDG); }
 
 void i2c_hold() {
-    _delay_ms(1000); //TODO: change to 5us!
+    _delay_ms(10); //TODO: change to 5us!
     /*
         from pcf8574 spec:
         max 100KHz, one tick 10us, correct delay is 5us
@@ -203,9 +203,15 @@ uint8_t pad_read() {
 void pad_autoread() {
 	print(PSTR("pad autoread\n\r"));
 	pad_init();
-    pad_write(0xff); //all pins HIGH = INPUT
+ //   pad_write(0xff); //all pins HIGH = INPUT
+	uint8_t ld =0;
 	while(!uart_read_ready()) {
-        pad_read();
+        uint8_t d =pad_read();
+	if (ld!=d) {	
+
+		print_hb(0,d);
+		ld=d;
+		}
     }
 }
 
