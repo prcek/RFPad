@@ -2,6 +2,7 @@
 #include<string.h>
 #include<stdio.h>
 #include<util/delay.h>
+#include<avr/io.h>
 #include<avr/pgmspace.h>
 #include"timer.h"
 #include"print.h"
@@ -87,7 +88,8 @@ void i2c_init() {
 
 uint8_t i2c_write(uint8_t data) {
     i2c_sclLo();
-    for (uint8_t mask = 0x80; mask != 0; mask >>=1) {
+    uint8_t mask;
+    for (mask = 0x80; mask != 0; mask >>=1) {
         i2c_sdaOut(data & mask);
         i2c_sclHi();
         i2c_sclLo();
@@ -114,7 +116,8 @@ void i2c_stop() {
 
 uint8_t i2c_read(uint8_t last) {
     uint8_t data = 0;
-    for (uint8_t mask = 0x80; mask !=0; mask >>=1) {
+    uint8_t mask; 
+    for (mask = 0x80; mask !=0; mask >>=1) {
         i2c_sclHi();
         if (i2c_sdaIn()) {
             data |= mask;

@@ -1,9 +1,14 @@
 #include"fake_avr/avr/eeprom.h"
 
+uint8_t PORTB;
+uint8_t DDRB;
+uint8_t PINB;
 
+uint8_t PORTC;
 uint8_t DDRC;
 uint8_t PINC;
 
+uint8_t PORTD;
 uint8_t DDRD;
 uint8_t PIND;
 
