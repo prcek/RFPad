@@ -190,7 +190,10 @@ void pad_test() {
 
 uint8_t pad_write(uint8_t data) {
     uint8_t ok = i2c_start(I2C_ADDR ); 
+    
+		print_hb(0,ok);
     uint8_t ok2 = i2c_write(data);
+		print_hb(0,ok2);
     i2c_stop();
 }
 
@@ -237,6 +240,16 @@ uint8_t pad_do_prompt() {
             pad_read();
             return 1;
         }
+        if (strcmp(cmd,"write")==0) {
+            pad_write(0xff);
+            return 1;
+        }
+   if (strcmp(cmd,"write0")==0) {
+            pad_write(0x0);
+            return 1;
+        }
+ 
+
         if (strcmp(cmd,"autoread")==0) {
             pad_autoread();
             return 1;
