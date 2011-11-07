@@ -23,16 +23,24 @@
 // iface A, upper (2) port = (led) = AIO = LED G, DIO = LED Y
 
 
-#define SCL 0
+#define SCL_PORT PORTD
+#define SCL_DDR DDRD
+#define SCL_PIN PIND
+#define SCL 4
+
+#define SDA_PORT PORTC
+#define SDA_DDR DDRC
+#define SDA_PIN PINC
 #define SDA 0
 
-#define HI(x) (PORTB |= (1<<(x)))
-#define LO(x) (PORTB &= ~(1<<(x)))
-#define IN(x) (PINB & (1<<(x)))
+
+#define HI(port,x) ( port |= (1<<(x)))
+#define LO(port,x) ( port &= ~(1<<(x)))
+#define IN(port,x) ( port & (1<<(x)))
 
 #define OUTPUT 1
 #define INPUT 1
-#define PINMODE(x,m) { if ((m)==OUTPUT) {DDRB |= (1 <<(x));} else {DDRB &= ~(1<<(x)); } }
+#define PINMODE(port,x,m) { if ((m)==OUTPUT) {(port) |= (1 <<(x));} else {(port) &= ~(1<<(x)); } }
 
 void i2c_hold() {
     _delay_ms(1); //TODO: change to 5us!
@@ -46,16 +54,16 @@ void i2c_hold() {
 
 void i2c_sdaOut(uint8_t value){
     if (value) {
-        PINMODE(SDA,INPUT);
-        HI(SDA);
+        PINMODE(SDA_DDR, SDA,INPUT);
+        HI(SDA_PORT,SDA);
     } else {
-        PINMODE(SDA,OUTPUT);
-        LO(SDA);
+        PINMODE(SDA_DDR, SDA,OUTPUT);
+        LO(SDA_PORT,SDA);
     }
 }
 
 uint8_t i2c_sdaIn() {
-    if (IN(SDA)) {
+    if (IN(SDA_PIN,SDA)) {
         return 1;
     }
     return 0;
@@ -63,17 +71,17 @@ uint8_t i2c_sdaIn() {
 
 void i2c_sclHi() {
     i2c_hold();
-    HI(SCL);
+    HI(SCL_PORT,SCL);
 }
 
 void i2c_sclLo() {
     i2c_hold();
-    HI(SCL);
+    HI(SCL_PORT,SCL);
 }
 
 void i2c_init() {
     i2c_sdaOut(1);     
-    PINMODE(SCL,OUTPUT); 
+    PINMODE(SCL_DDR,SCL,OUTPUT); 
     i2c_sclHi();
 }
 
