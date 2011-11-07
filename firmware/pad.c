@@ -34,17 +34,33 @@
 #define SDA_PIN PINC
 #define SDA 0
 
+#define LEDY_PORT PORTD
+#define LEDY_DDR DDRD
+#define LEDY_PIN PIND
+#define LEDY 5
+
+#define LEDG_PORT PORTC
+#define LEDG_DDR DDRC
+#define LEDG_PIN PINC
+#define LEDG 1
+
+
 
 #define HI(port,x) ( port |= (1<<(x)))
 #define LO(port,x) ( port &= ~(1<<(x)))
 #define IN(port,x) ( port & (1<<(x)))
 
 #define OUTPUT 1
-#define INPUT 1
+#define INPUT 0
 #define PINMODE(port,x,m) { if ((m)==OUTPUT) {(port) |= (1 <<(x));} else {(port) &= ~(1<<(x)); } }
 
+void led_y_on() { HI(LEDY_PORT,LEDY); }
+void led_g_on() { HI(LEDG_PORT,LEDG); }
+void led_y_off() { LO(LEDY_PORT,LEDY); }
+void led_g_off() { LO(LEDG_PORT,LEDG); }
+
 void i2c_hold() {
-    _delay_ms(1); //TODO: change to 5us!
+    _delay_ms(1000); //TODO: change to 5us!
     /*
         from pcf8574 spec:
         max 100KHz, one tick 10us, correct delay is 5us
@@ -56,9 +72,11 @@ void i2c_hold() {
 void i2c_sdaOut(uint8_t value){
     if (value) {
         PINMODE(SDA_DDR, SDA,INPUT);
+	led_g_on();
         HI(SDA_PORT,SDA);
     } else {
         PINMODE(SDA_DDR, SDA,OUTPUT);
+	led_g_off();
         LO(SDA_PORT,SDA);
     }
 }
@@ -72,12 +90,14 @@ uint8_t i2c_sdaIn() {
 
 void i2c_sclHi() {
     i2c_hold();
+    led_y_on();
     HI(SCL_PORT,SCL);
 }
 
 void i2c_sclLo() {
     i2c_hold();
-    HI(SCL_PORT,SCL);
+    led_y_off();
+    LO(SCL_PORT,SCL);
 }
 
 void i2c_init() {
@@ -135,12 +155,28 @@ uint8_t i2c_read(uint8_t last) {
 }
 
 
+void led_init() {
+	PINMODE(LEDY_DDR, LEDY,OUTPUT);
+        LO(LEDY_PORT,LEDY);
+	PINMODE(LEDG_DDR, LEDG,OUTPUT);
+        LO(LEDG_PORT,LEDG);
+}
 #define I2C_ADDR 0x40
 
 void pad_init() {
     i2c_init();
+    led_init();
 }
 
+
+void pad_led() {
+	led_y_on();
+    _delay_ms(1000); //TODO: change to 5us!
+	led_y_off();
+	led_g_on();
+    _delay_ms(1000); //TODO: change to 5us!
+	led_g_off();
+}
 
 void pad_test() {
     uint8_t ok = i2c_start(I2C_ADDR);
@@ -186,6 +222,11 @@ uint8_t pad_do_prompt() {
             pad_test();
             return 1;
         }
+    if (strcmp(cmd,"led")==0) {
+            pad_led();
+            return 1;
+        }
+     
         if (strcmp(cmd,"read")==0) {
             pad_read();
             return 1;
