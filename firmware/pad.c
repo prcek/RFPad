@@ -60,7 +60,7 @@ void led_y_off() { LO(LEDY_PORT,LEDY); }
 void led_g_off() { LO(LEDG_PORT,LEDG); }
 
 void i2c_hold() {
-    _delay_ms(10); //TODO: change to 5us!
+    _delay_us(5); //TODO: change to 5us!
     /*
         from pcf8574 spec:
         max 100KHz, one tick 10us, correct delay is 5us
