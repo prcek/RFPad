@@ -19,6 +19,9 @@
 // jeenode PORT3 = IRQ:PD3, SDA:AIO:PC2, SCL:DIO:PD6
 // jeenode PORT4 = IRQ:PD3, SDA:AIO:PC3, SCL:DIO:PD7
 
+// iface A, bottom (1) port = (io) = AIO = SDA, DIO = SCL, IRQ = INT
+// iface A, upper (2) port = (led) = AIO = LED G, DIO = LED Y
+
 
 #define SCL 0
 #define SDA 0
