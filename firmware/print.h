@@ -6,6 +6,7 @@
 void print(const char *str);
 void print_nl();
 void print_ok_nl();
+void print_err_nl();
 void print_space();
 void print_spaces(uint8_t c);
 void print_char(uint8_t c);

@@ -25,6 +25,13 @@ void print_ok_nl() {
 	fputc('\r',stdout);
 }
 
+void print_err_nl() {
+	fputc('E',stdout);
+	fputc('R',stdout);
+	fputc('R',stdout);
+	fputc('\n',stdout);
+	fputc('\r',stdout);
+}
 
 void print_space() {
 	fputc(' ',stdout);

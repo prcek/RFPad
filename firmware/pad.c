@@ -24,6 +24,13 @@
 // iface A, upper (2) port = (led) = AIO = LED G, DIO = LED Y
 
 
+#define I2C_ADDR 0x40
+#define PAD_REMOTE_LED_Y 7
+#define PAD_REMOTE_LED_G 6
+#define PAD_REMOTE_BUTTON_MASK (~((1<<PAD_REMOTE_LED_Y) | (1<<PAD_REMOTE_LED_G)))
+#define PAD_REMOTE_ERROR 0xff
+
+
 #define SCL_PORT PORTD
 #define SCL_DDR DDRD
 #define SCL_PIN PIND
@@ -60,7 +67,7 @@ void led_y_off() { LO(LEDY_PORT,LEDY); }
 void led_g_off() { LO(LEDG_PORT,LEDG); }
 
 void i2c_hold() {
-    _delay_us(5); //TODO: change to 5us!
+    _delay_us(5); 
     /*
         from pcf8574 spec:
         max 100KHz, one tick 10us, correct delay is 5us
@@ -72,11 +79,11 @@ void i2c_hold() {
 void i2c_sdaOut(uint8_t value){
     if (value) {
         PINMODE(SDA_DDR, SDA,INPUT);
-	led_g_on();
+        led_g_on();
         HI(SDA_PORT,SDA);
     } else {
         PINMODE(SDA_DDR, SDA,OUTPUT);
-	led_g_off();
+        led_g_off();
         LO(SDA_PORT,SDA);
     }
 }
@@ -156,66 +163,120 @@ uint8_t i2c_read(uint8_t last) {
 
 
 void led_init() {
-	PINMODE(LEDY_DDR, LEDY,OUTPUT);
-        LO(LEDY_PORT,LEDY);
-	PINMODE(LEDG_DDR, LEDG,OUTPUT);
-        LO(LEDG_PORT,LEDG);
-}
-#define I2C_ADDR 0x40
-
-void pad_init() {
-    i2c_init();
-    led_init();
+    PINMODE(LEDY_DDR, LEDY,OUTPUT);
+    LO(LEDY_PORT,LEDY);
+    PINMODE(LEDG_DDR, LEDG,OUTPUT);
+    LO(LEDG_PORT,LEDG);
 }
 
-
+//local led blink test
 void pad_led() {
-	led_y_on();
-    _delay_ms(1000); //TODO: change to 5us!
-	led_y_off();
-	led_g_on();
-    _delay_ms(1000); //TODO: change to 5us!
-	led_g_off();
-}
-
-void pad_test() {
-    uint8_t ok = i2c_start(I2C_ADDR);
-    i2c_stop();
-    if (ok) {
-	    print(PSTR("pad test ok\n\r"));
-    } else {
-	    print(PSTR("pad test error\n\r"));
+    uint8_t l;
+    for (l=0; l<10; l++) {
+    	led_y_on();
+        _delay_ms(100); 
+    	led_y_off();
+    	led_g_on();
+        _delay_ms(100); 
+    	led_g_off();
     }
 }
 
-uint8_t pad_write(uint8_t data) {
-    uint8_t ok = i2c_start(I2C_ADDR ); 
-    
-		print_hb(0,ok);
-    uint8_t ok2 = i2c_write(data);
-		print_hb(0,ok2);
+uint8_t pad_ping() {
+    uint8_t ok = i2c_start(I2C_ADDR);
     i2c_stop();
+    return ok; 
+}
+
+static uint8_t pad_last_write_data = 0;
+
+uint8_t pad_write(uint8_t data) {
+    uint8_t ok;
+    ok = i2c_start(I2C_ADDR ); 
+    if (!ok) {
+        i2c_stop();
+        return 0;
+    } 
+    ok = i2c_write(data);
+    i2c_stop();
+
+//#ifndef AVR
+//    print_hb(0,data);
+//    print_nl();
+//#endif
+
+    pad_last_write_data = data;
+    return ok;
 }
 
 uint8_t pad_read() {
     uint8_t ok = i2c_start(I2C_ADDR | 1); 
+    if (!ok) {
+        //TODO !
+    }
     uint8_t data = i2c_read(1);  
     return data;
+}
+
+uint8_t pad_state() {
+    uint8_t ok = i2c_start(I2C_ADDR | 1); 
+    if (!ok) {
+        return PAD_REMOTE_ERROR;
+    }
+    uint8_t data = i2c_read(1);  
+    return data & PAD_REMOTE_BUTTON_MASK;
 }
 
 void pad_autoread() {
 	print(PSTR("pad autoread\n\r"));
 	pad_init();
- //   pad_write(0xff); //all pins HIGH = INPUT
 	uint8_t ld =0;
 	while(!uart_read_ready()) {
-        uint8_t d =pad_read();
-	if (ld!=d) {	
-
-		print_hb(0,d);
-		ld=d;
+        uint8_t d = pad_read();
+	    if (ld!=d) {	
+		    print_hb(0,d);
+    		ld=d;
 		}
     }
+}
+
+uint8_t pad_remote_led_y(uint8_t on) {
+    uint8_t d = pad_last_write_data;
+    if (on) {
+        d &= ~(1 << PAD_REMOTE_LED_Y);
+    } else {
+        d |=  (1 << PAD_REMOTE_LED_Y);
+    }
+    return pad_write(d);
+}
+uint8_t pad_remote_led_g(uint8_t on) {
+    uint8_t d = pad_last_write_data;
+    if (on) {
+        d &= ~(1 << PAD_REMOTE_LED_G);
+    } else {
+        d |=  (1 << PAD_REMOTE_LED_G);
+    }
+    return pad_write(d);
+}
+
+//remote led blink test
+void pad_remote_led() {
+    uint8_t l;
+    for (l=0; l<10; l++) {
+        pad_remote_led_y(1);
+        _delay_ms(100); 
+        pad_remote_led_y(0);
+        pad_remote_led_g(1);
+        _delay_ms(100);
+        pad_remote_led_g(0);
+    }
+}
+
+
+void pad_init() {
+    i2c_init();
+    led_init();
+    pad_write(0xff);
 }
 
 
@@ -227,28 +288,51 @@ uint8_t pad_do_prompt() {
             pad_init();
             return 1;
         }
-        if (strcmp(cmd,"test")==0) {
-            pad_test();
+        if ((strcmp(cmd,"test")==0) || (strcmp(cmd,"ping")==0)) {
+            if (pad_ping()) {
+                print_ok_nl();
+            } else {
+                print_err_nl();
+            }
             return 1;
         }
-    if (strcmp(cmd,"led")==0) {
+
+        if (strcmp(cmd,"state")==0) {
+            uint8_t d = pad_state();
+            if (d == PAD_REMOTE_ERROR) {
+                print_err_nl();
+            } else {
+    		    print_hb(0,d);
+                print_nl();
+            }
+            return 1;
+        }
+ 
+        if (strcmp(cmd,"led")==0) {
             pad_led();
+            return 1;
+        }
+
+        if (strcmp(cmd,"rled")==0) {
+            pad_remote_led();
             return 1;
         }
      
         if (strcmp(cmd,"read")==0) {
-            pad_read();
+            uint8_t d = pad_read();
+		    print_hb(0,d);
+            print_nl();
             return 1;
         }
         if (strcmp(cmd,"write")==0) {
-            pad_write(0xff);
+		    uint8_t v0 = scan_uint8();
+            if (pad_write(v0)) {
+                print_ok_nl();
+            } else {
+                print_err_nl();
+            }
             return 1;
         }
-   if (strcmp(cmd,"write0")==0) {
-            pad_write(0x0);
-            return 1;
-        }
- 
 
         if (strcmp(cmd,"autoread")==0) {
             pad_autoread();
